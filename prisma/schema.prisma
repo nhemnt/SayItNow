@@ -1,13 +1,12 @@
-datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  relationMode = "prisma"
+}
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -43,6 +42,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  role          String?
 }
 
 model VerificationToken {
@@ -51,4 +51,17 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Response {
+  id         Int       @id @default(autoincrement())
+  content    String
+  upvotes    Int       @default(0)
+  downvotes  Int       @default(0)
+  createdAt DateTime  @default(now())
+  boosted    Boolean   @default(false)
+  boostedAt  DateTime?
+  boostedExpiry DateTime?
+  country String?
+  approved    Boolean   @default(false)
 }

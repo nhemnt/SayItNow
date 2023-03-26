@@ -33,6 +33,7 @@ CREATE TABLE "User" (
     "email" TEXT,
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
+    "role" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -42,6 +43,22 @@ CREATE TABLE "VerificationToken" (
     "identifier" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Response" (
+    "id" INT NOT NULL,
+    "content" TEXT,
+    "upvotes" INT DEFAULT 0,
+    "downvotes" INT DEFAULT 0,
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "boosted" BOOLEAN DEFAULT false,
+    "boostedAt" TIMESTAMP,
+    "boostedExpiry" TIMESTAMP,
+    "country" TEXT,
+    "approved" BOOLEAN DEFAULT false,
+
+    CONSTRAINT "Response_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

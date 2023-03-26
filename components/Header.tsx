@@ -13,7 +13,7 @@ export default function Header({ photo }: { photo?: string | undefined }) {
           height={25}
         />
         <h1 className="sm:text-4xl text-2xl font-bold ml-2 tracking-tight">
-          restorePhotos.io
+          Say It Now
         </h1>
       </Link>
       {photo ? (
@@ -25,11 +25,7 @@ export default function Header({ photo }: { photo?: string | undefined }) {
           height={28}
         />
       ) : (
-        <a
-          href="https://vercel.com/templates/next.js/ai-photo-restorer"
-          target="_blank"
-          rel="noreferrer"
-        >
+        
           <Image
             alt="Vercel Icon"
             src="/vercelLogo.png"
@@ -37,7 +33,6 @@ export default function Header({ photo }: { photo?: string | undefined }) {
             width={32}
             height={28}
           />
-        </a>
       )}
     </header>
   );

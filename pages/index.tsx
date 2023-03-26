@@ -6,11 +6,11 @@ import Form from '../components/Form';
 import Header from "../components/Header";
 import SquigglyLines from "../components/SquigglyLines";
 import { Testimonials } from "../components/Testimonials";
-import { getResponses, responsesQueryKey } from '../lib/helper';
+import { getResponses } from '../lib/helper';
 
 
 
-const Home: NextPage = ({data}) => {
+const Home: NextPage = ({data}: any) => {
   return (
     <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <Head>

@@ -123,12 +123,12 @@ const PostItem = (props: any) => {
   );
 };
 
-export function Testimonials({ initialData }) {
+export function Testimonials({ initialData }: any) {
   const { data, hasNextPage, fetchNextPage } = useInfiniteQuery(
     responsesQueryKey,
     ({ pageParam = 1 }) => getResponses(pageParam),
     {
-      initialData: { pages: [initialData] },
+      initialData: {pages: [initialData], pageParams: [1] },
       getNextPageParam: (lastPage, allPages) => {
         if (allPages.length < lastPage.data.maxPage) {
           return allPages.length + 1;

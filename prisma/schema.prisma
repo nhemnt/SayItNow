@@ -56,8 +56,7 @@ model VerificationToken {
 model Response {
   id         Int       @id @default(autoincrement())
   content    String
-  upvotes    Int       @default(0)
-  downvotes  Int       @default(0)
+  votes      Int       @default(0)
   createdAt DateTime  @default(now())
   boosted    Boolean   @default(false)
   boostedAt  DateTime?

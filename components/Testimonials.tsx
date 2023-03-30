@@ -5,6 +5,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { responsesQueryKey, getResponses } from "../lib/helper";
+import { useDownvote, useUpovote } from "../lib/hooks";
 
 const container = {
   hidden: { opacity: 0 },
@@ -19,26 +20,24 @@ const container = {
 const PostItem = (props: any) => {
   const [upvote, setUpvote] = useState(false);
   const [downvote, setDownvote] = useState(false);
-  const { columnIndex, column } = props;
+  const { columnIndex, column, refetchResponse } = props;
   const controls = useAnimation();
   const [ref, inView] = useInView();
 
+  const { refetch: clickUpvote } = useUpovote(column.id, {onSuccess: () => refetchResponse()});
+  const { refetch: clickDownVote } = useDownvote(column.id, {onSuccess: () => refetchResponse()});
   const upvoteResponse = () => {
-    if (upvote) {
-      setUpvote(false);
-    } else {
-      setUpvote(true);
-      setDownvote(false);
-    }
+    if (upvote === true) return;
+    setUpvote(true);
+    setDownvote(false);
+    clickUpvote();
   };
 
   const downVoteResponse = () => {
-    if (downvote) {
-      setDownvote(false);
-    } else {
-      setDownvote(true);
-      setUpvote(false);
-    }
+    if (downvote === true) return;
+    setDownvote(true);
+    setUpvote(false);
+    clickDownVote();
   };
   useEffect(() => {
     if (inView) {
@@ -76,10 +75,9 @@ const PostItem = (props: any) => {
         <figcaption className="relative flex items-center justify-between border-r border-slate-100 pr-2">
           <div className="flex items-center flex-col">
             <button
-              className={cx(
-                "p-2 border rounded-full hover:bg-gray-100 ",
-                { "bg-blue-500 text-white hover:bg-blue-500": upvote }
-              )}
+              className={cx("p-2 border rounded-full", {
+                "bg-blue-500 text-white": upvote,
+              })}
               onClick={upvoteResponse}
             >
               <svg
@@ -97,10 +95,13 @@ const PostItem = (props: any) => {
                 />
               </svg>
             </button>
-            <span className="text-lg font-bold">
-              {Number(column.upvotes) - Number(column.downvotes)}
-            </span>
-            <button className={cx("p-2 border rounded-full hover:bg-gray-100", { "bg-blue-500 text-white hover:bg-blue-500": downvote })} onClick={downVoteResponse}>
+            <span className="text-lg font-bold">{Number(column.votes)}</span>
+            <button
+              className={cx("p-2 border rounded-full", {
+                "bg-blue-500 text-white": downvote,
+              })}
+              onClick={downVoteResponse}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4"
@@ -124,13 +125,13 @@ const PostItem = (props: any) => {
 };
 
 export function Testimonials({ initialData }: any) {
-  const { data, hasNextPage, fetchNextPage } = useInfiniteQuery(
+  const { data, hasNextPage, fetchNextPage, refetch } = useInfiniteQuery(
     responsesQueryKey,
     ({ pageParam = 1 }) => getResponses(pageParam),
     {
-      initialData: {pages: [initialData], pageParams: [1] },
+      initialData: { pages: [initialData], pageParams: [1] },
       getNextPageParam: (lastPage, allPages) => {
-        if (allPages.length < lastPage.data.maxPage) {
+        if (allPages?.length < lastPage?.data?.maxPage) {
           return allPages.length + 1;
         }
       },
@@ -141,7 +142,8 @@ export function Testimonials({ initialData }: any) {
   };
 
   const responses: any =
-    data?.pages?.flatMap((page) => page.data.responses) || [];
+    data?.pages?.flatMap((page) => page?.data?.responses).filter((x) => x) ||
+    [];
   return (
     <section
       id="testimonials"
@@ -159,6 +161,7 @@ export function Testimonials({ initialData }: any) {
           <motion.ul initial="hidden" animate="show" variants={container}>
             {responses?.map((column: any, columnIndex: string) => (
               <PostItem
+                refetchResponse={refetch}
                 column={column}
                 columnIndex={columnIndex}
                 key={column.id}

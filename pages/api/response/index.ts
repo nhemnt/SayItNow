@@ -39,8 +39,7 @@ export default async function handler(
       where: { approved: true },
       orderBy: [
         { boosted: 'desc' },
-        { upvotes: 'desc' },
-        { downvotes: 'asc' },
+        { votes: 'desc' },
         { createdAt: 'asc' },
       ],
       skip: (page - 1) * PAGE_SIZE,

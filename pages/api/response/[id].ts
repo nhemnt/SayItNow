@@ -29,19 +29,20 @@ export default async function handler(
     const { id } = req.query;
     const { upvote = false, downvote = false } = req.body;
     let data: any = { };
+    let voteDiff = 0;
     if (upvote) {
-      data.upvotes = {
-        increment: 1,
-      };
+      voteDiff += 1;
     }
     if (downvote) {
-      data.downvotes = {
-        increment: 1,
-      };
+      voteDiff -= 1;
     }
     await prisma.response.update({
       where: { id: Number(id) },
-      data: data,
+      data: {
+        votes: {
+          increment: voteDiff,
+        },
+      },
     });
 
     res
